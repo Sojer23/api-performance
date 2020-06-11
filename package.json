@@ -1,0 +1,19 @@
+{
+  "name": "apiperformance",
+  "version": "1.0.0",
+  "description": "A tool to reach the optimum delay to apply in APIPecker module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "apiper": "./index.js"
+  },
+  "author": "Jose Gallardo",
+  "license": "ISC",
+  "dependencies": {
+    "cli-progress": "^3.8.2",
+    "cli-table": "^0.3.1"
+  }
+}

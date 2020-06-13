@@ -1,0 +1,100 @@
+{
+    "totalResults": [
+        {
+            "type": "t0",
+            "problem": {
+                "p1": 10000,
+                "p2": 100,
+                "concurrentUsers": 1,
+                "delay": 2323
+            },
+            "result": {
+                "count": 50,
+                "min": 255.866,
+                "max": 296.372,
+                "mean": 1,
+                "std": 10.017
+            }
+        },
+        {
+            "type": "t0",
+            "problem": {
+                "p1": 10000,
+                "p2": 100,
+                "concurrentUsers": 2,
+                "delay": 2323
+            },
+            "result": {
+                "count": 50,
+                "min": 255.866,
+                "max": 296.372,
+                "mean": 1,
+                "std": 10.017
+            }
+        },
+        {
+            "type": "t1",
+            "problem": {
+                "p1": 20000,
+                "p2": 200,
+                "concurrentUsers": 1,
+                "delay": 2323
+            },
+            "result": {
+                "count": 50,
+                "min": 255.866,
+                "max": 296.372,
+                "mean": 1,
+                "std": 10.017
+            }
+        },
+        {
+            "type": "t1",
+            "problem": {
+                "p1": 20000,
+                "p2": 200,
+                "concurrentUsers": 2,
+                "delay": 2323
+            },
+            "result": {
+                "count": 50,
+                "min": 255.866,
+                "max": 296.372,
+                "mean": 1,
+                "std": 10.017
+            }
+        },
+        {
+            "type": "t2",
+            "problem": {
+                "p1": 40000,
+                "p2": 200,
+                "concurrentUsers": 1,
+                "delay": 2323
+            },
+            "result": {
+                "count": 50,
+                "min": 255.866,
+                "max": 296.372,
+                "mean": 1,
+                "std": 10.017
+            }
+        },
+        {
+            "type": "t2",
+            "problem": {
+                "p1": 40000,
+                "p2": 200,
+                "concurrentUsers": 2,
+                "delay": 2323
+            },
+            "result": {
+                "count": 50,
+                "min": 255.866,
+                "max": 296.372,
+                "mean": 1,
+                "std": 10.017
+            }
+        }
+    ]
+}

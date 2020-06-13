@@ -64,8 +64,8 @@ var delayTable = new Table({
 if ((delayAnalisys && process.argv.length != 7) ||
     (totalAnalisys && process.argv.length < 8) ||
     (!delayAnalisys && !totalAnalisys) ||
-    (iterationsToDelay < 2 || iterationsToDelay > 6) ||
-    (maxTime < 500 || maxTime > 30000) ||
+    (iterationsToDelay < 3 || iterationsToDelay > 6) ||
+    (maxTime < 200 || maxTime > 30000) ||
     (multiplyFactor < 2 || multiplyFactor > 10) ||
     (problemsToGenerate < 1 || problemsToGenerate > 6) ||
     (concurrentUsers < 1 || concurrentUsers > 10) ||
@@ -73,6 +73,7 @@ if ((delayAnalisys && process.argv.length != 7) ||
     console.log(" ╔══════════════════════════════════╗ ");
     console.log(" ║         INCORRECT FORMAT!        ║ ");
     console.log(" ╚══════════════════════════════════╝ ");
+    console.log(" ╔════════════════════════════════════════════════════════════════════════════════════════════ ");
     console.log(" ║ Use: apiper <analysisType> <url> <queryParam1> <queryParam2> <iterationsToDelay> <multiplyProblem> <maxTime>");
     console.log(" ║");
     console.log(" ║ Example: apiper -d http://ks.com/api/v1/stress/ 10000 100 2");
@@ -86,15 +87,23 @@ if ((delayAnalisys && process.argv.length != 7) ||
     console.log(" ║ - (3) queryParam1 (required): First query param of the endpoint");
     console.log(" ║ - (4) queryParam2 (optional): Second query param of the endpoint");
     console.log(" ║ - (5) iterationsToDelay (required): Number of iterations to reach the optimum delay number");
-    console.log(" ║     - Min: 2, Max: 6");
+    console.log(" ║     - Min: 3, Max: 6");
     console.log(" ║ - (6) concurrentUsers (required): Number of concurrent users to test in each problem size.");
-    console.log(" ║     - Min: 2, Max: 10");
+    console.log(" ║     - Min: 1, Max: 10");
     console.log(" ║ - (7) problemsToGenerate (required): Number of different problems to generate besides of the original one.");
     console.log(" ║     - Min: 1, Max: 6");
     console.log(" ║ - (8) multiplyProblem (required): Multiply factor to increase the size of the problem.");
     console.log(" ║     - Min: 2, Max: 10");
     console.log(" ║ - (9) maxTime (ms) (optional): The maximum execution time of a request to continue testing problems unless it exists more");
     console.log(" ║     - Min: 500 ms, Max: 30000 ms, Default: 20000 ms");
+    console.log(" ╚════════════════════════════════════════════════════════════════════════════════════════════");
+    console.log(" ╔══════════════════════════════════╗ ");
+    console.log(" ║           INFORMATION            ║ ");
+    console.log(" ╚══════════════════════════════════╝ ");
+    console.log(" ╔════════════════════════════════════════════════════════════════════════════════════════════ ");
+    console.log(" ║ This tool use the module 'api-pecker' to do requests to the endpoint introduced.");
+    console.log(" ║  - Param 'iteration' is setted by default as: 50. It is a measure sufficient to stress an API and get correct mean data.");
+    console.log(" ╚════════════════════════════════════════════════════════════════════════════════════════════");
     process.exit();
 }
 
@@ -114,74 +123,6 @@ async function showResult() {
         let problems = await generateProblems();
         let totalResults = await solveProblems(problems);
 
-        // let totalResults = [
-        //     {
-        //         type: 't0',
-        //         problem: { p1: 10000, p2: 100, concurrentUsers: 1, delay: 2323 },
-        //         result: {
-        //             count: 50,
-        //             min: 255.866,
-        //             max: 296.372,
-        //             mean: 1,
-        //             std: 10.017
-        //         }
-        //     },
-        //     {
-        //         type: 't0',
-        //         problem: { p1: 10000, p2: 100, concurrentUsers: 2, delay: 2323 },
-        //         result: {
-        //             count: 50,
-        //             min: 255.866,
-        //             max: 296.372,
-        //             mean: 2,
-        //             std: 10.017
-        //         }
-        //     },
-        //     {
-        //         type: 't0',
-        //         problem: { p1: 10000, p2: 100, concurrentUsers: 3, delay: 2323 },
-        //         result: {
-        //             count: 50,
-        //             min: 255.866,
-        //             max: 296.372,
-        //             mean: 3,
-        //             std: 10.017
-        //         }
-        //     },
-        //     {
-        //         type: 't0',
-        //         problem: { p1: 10000, p2: 100, concurrentUsers: 4, delay: 2323 },
-        //         result: {
-        //             count: 50,
-        //             min: 255.866,
-        //             max: 296.372,
-        //             mean: 4,
-        //             std: 10.017
-        //         }
-        //     },
-        //     {
-        //         type: 't1',
-        //         problem: { p1: 20000, p2: 200, concurrentUsers: 1, delay: 2323 },
-        //         result: {
-        //             count: 50,
-        //             min: 320.282,
-        //             max: 391.087,
-        //             mean: 335.732,
-        //             std: 13.682
-        //         }
-        //     }, {
-        //         type: 't2',
-        //         problem: { p1: 20000, p2: 200, concurrentUsers: 1, delay: 2323 },
-        //         result: {
-        //             count: 50,
-        //             min: 320.282,
-        //             max: 391.087,
-        //             mean: 335.732,
-        //             std: 13.682
-        //         }
-        //     }
-        // ];
-
         formatTotalResult(totalResults);
 
         process.exit();
@@ -196,7 +137,7 @@ showResult();
 function formatTotalResult(totalResults) {
 
     console.log(" ╔══════════════════════════════════╗ ");
-    console.log(" ║            RESULTADOS            ║ ");
+    console.log(" ║              RESULTS             ║ ");
     console.log(" ╚══════════════════════════════════╝ ");
     // Iterate by problem and generate a table by each problem size
     let tablesToCreate = new Map();
@@ -224,7 +165,7 @@ function formatTotalResult(totalResults) {
         });
 
         console.log(" ╔═══════════════════════════════════════════════════════╗ ");
-        console.log(" ║              PROBLEM "+key+" SIZE: "+value.problem.p1 + '/' + value.problem.p2+"               ║ ");
+        console.log(" ║              PROBLEM " + key + " ═ PARAMS: " + value.problem.p1 + '/' + value.problem.p2 + "           ║ ");
         console.log(" ╚═══════════════════════════════════════════════════════╝ ");
         console.log(table.toString());
 
@@ -279,7 +220,7 @@ async function solveProblems(problems) {
                     }
 
                     let result = await getStatsByProblem(config);
-                    if (result) {
+                    if (result.mean < maxTime) {
                         totalResults.push({ type: p.type, problem: p, result: result });
                         problemsSolved = problemsSolved + 1;
 
@@ -288,12 +229,17 @@ async function solveProblems(problems) {
                             solveProblemsBar.stop();
                             res(totalResults);
                         }
+                    } else {
+                        solveProblemsBar.update({ initText: ' ⚠ Stopped' });
+                        console.log('\n ║ ⚠ ⚠ ⚠ Next problem will exceed the maximum time indicates: '+maxTime+' ms ⚠ ⚠ ⚠')
+                        console.log(' ║ Problem: Params: '+p.p1+'/'+p.p2+' - Users:'+p.concurrentUsers)
+                        problemsSolved = problemsSolved + 1;
+                        totalResults.push({ type: p.type, problem: p, result: result });
+                        res(totalResults);
                     }
                 } else {
                     console.log(" Delay number not calculated yet");
                 }
-                //console.log("p1: " + p.p1 + " p2: " + p.p2 + ' Users: ' + p.concurrentUsers + ' -----> ' + delay);
-
 
             });
 
@@ -316,7 +262,7 @@ function generateProblems() {
             console.log(" ║        GENERATING PROBLEMS       ║ ");
             console.log(" ╚══════════════════════════════════╝ ");
             // Start the progress bar
-            generateProblemsBar.start(100, 0, { initText: "Generating...", i: 0, problems: problemsToGenerate * concurrentUsers });
+            generateProblemsBar.start(100, 0, { initText: "Generating...", i: 0, problems: (parseInt(problemsToGenerate) * parseInt(concurrentUsers) + parseInt(concurrentUsers)) });
             let problems = [];
 
             // Generate initial problem 
@@ -330,15 +276,18 @@ function generateProblems() {
             }
 
             // Multiply each problem size by user
+            let problemNumber = 0;
             problems.forEach(p => {
                 for (j = 1; j <= concurrentUsers; j++) {
                     let problem = { p1: p.p1, p2: p.p2 };
                     problem.concurrentUsers = j;
                     problem.type = p.type;
                     problems.push(problem);
-                    generateProblemsBar.update(j * 100 / problemsToGenerate * concurrentUsers, { i: j });
+                    problemNumber++;
+                    generateProblemsBar.update(problemNumber * 100 / problemsToGenerate * concurrentUsers, { i: problemNumber });
                 }
             });
+
 
             // Remove first problems
             problems = problems.filter(p => p.concurrentUsers);

@@ -3,6 +3,7 @@
 const exec = require("child_process").exec;
 const Table = require('cli-table');
 const cliProgress = require('cli-progress');
+const asciichart = require('asciichart');
 
 const delayAnalisys = (process.argv[2] === ("-d"));
 const totalAnalisys = (process.argv[2] === ("-t"));
@@ -65,10 +66,10 @@ if ((delayAnalisys && process.argv.length != 7) ||
     (totalAnalisys && process.argv.length < 8) ||
     (!delayAnalisys && !totalAnalisys) ||
     (iterationsToDelay < 3 || iterationsToDelay > 6) ||
-    (maxTime < 200 || maxTime > 30000) ||
+    (maxTime < 200 || maxTime > 60000) ||
     (multiplyFactor < 2 || multiplyFactor > 10) ||
-    (problemsToGenerate < 1 || problemsToGenerate > 6) ||
-    (concurrentUsers < 1 || concurrentUsers > 10) ||
+    (problemsToGenerate < 1 || problemsToGenerate > 10) ||
+    (concurrentUsers < 1 || concurrentUsers > 14) ||
     (!queryParam1)) {
     console.log(" ╔══════════════════════════════════╗ ");
     console.log(" ║         INCORRECT FORMAT!        ║ ");
@@ -95,7 +96,7 @@ if ((delayAnalisys && process.argv.length != 7) ||
     console.log(" ║ - (8) multiplyProblem (required): Multiply factor to increase the size of the problem.");
     console.log(" ║     - Min: 2, Max: 10");
     console.log(" ║ - (9) maxTime (ms) (optional): The maximum execution time of a request to continue testing problems unless it exists more");
-    console.log(" ║     - Min: 500 ms, Max: 30000 ms, Default: 20000 ms");
+    console.log(" ║     - Min: 200 ms, Max: 30000 ms, Default: 20000 ms");
     console.log(" ╚════════════════════════════════════════════════════════════════════════════════════════════");
     console.log(" ╔══════════════════════════════════╗ ");
     console.log(" ║           INFORMATION            ║ ");
@@ -116,14 +117,16 @@ async function showResult() {
         // Calculate delay param one time
         let delaySelected = await optimizingDelayNumber();
         console.log(" ╔══════════════════════════════════╗ ");
-        console.log(" ║     OPTIMUM DELAY: " + delaySelected + "       ║ ");
+        console.log(" ║     OPTIMUM DELAY: " + delaySelected + "        ║ ");
         console.log(" ╚══════════════════════════════════╝ ");
+
     } else {
         // Generate and solve problems
         let problems = await generateProblems();
         let totalResults = await solveProblems(problems);
 
         formatTotalResult(totalResults);
+
 
         process.exit();
     }
@@ -136,13 +139,18 @@ showResult();
 
 function formatTotalResult(totalResults) {
 
-    console.log(" ╔══════════════════════════════════╗ ");
-    console.log(" ║              RESULTS             ║ ");
-    console.log(" ╚══════════════════════════════════╝ ");
+    if (totalResults.length < 0) {
+        console.log(" ╔══════════════════════════════════╗ ");
+        console.log(" ║              RESULTS             ║ ");
+        console.log(" ╚══════════════════════════════════╝ ");
+    }
+
+    let totalChartValues = [];
     // Iterate by problem and generate a table by each problem size
     let tablesToCreate = new Map();
 
     totalResults.forEach(r => {
+        totalChartValues.push(r.result.mean);
         if (!tablesToCreate.has(r.type)) {
             tablesToCreate.set(r.type, { problem: { p1: r.problem.p1, p2: r.problem.p2 }, iterations: [r] });
         } else {
@@ -152,13 +160,16 @@ function formatTotalResult(totalResults) {
         }
     });
 
+
     for (let [key, value] of tablesToCreate) {
+        let chartValues = [];
         let table = new Table({
             head: ['Params', 'Concurrent\nusers', 'Delay', 'Mean (ms)', 'Standar\ndeviation'],
             chars: tableChars
         });
 
         value.iterations.forEach(iteration => {
+            chartValues.push(iteration.result.mean);
             table.push(
                 [iteration.problem.p1 + '/' + iteration.problem.p2, iteration.problem.concurrentUsers, iteration.problem.delay, iteration.result.mean, iteration.result.std],
             );
@@ -169,7 +180,21 @@ function formatTotalResult(totalResults) {
         console.log(" ╚═══════════════════════════════════════════════════════╝ ");
         console.log(table.toString());
 
+        if (concurrentUsers > 1) {
+            console.log(asciichart.plot(chartValues, { height: 5, colors: [asciichart.red] }));
+        }
     }
+
+
+    // Show final chart if more than one problem solved
+    if(totalResults.length > 1){
+        console.log(" ╔═══════════════════════════════════════╗ ");
+        console.log(" ║         PROBLEMS RESULTS CHART        ║ ");
+        console.log(" ╚═══════════════════════════════════════╝ ");
+        console.log(asciichart.plot(totalChartValues, { height: 5, colors: [asciichart.red] }));
+    }
+    
+
 
 
 }
@@ -206,7 +231,7 @@ async function solveProblems(problems) {
                 const delay = await optimizingDelayNumber(config);
                 config.delay = delay;
                 p.delay = delay;
-                if (delay) {
+                if (delay < (maxTime * 2)) {
 
                     // First execution or next
                     if (problemsSolved === 1) {
@@ -231,14 +256,18 @@ async function solveProblems(problems) {
                         }
                     } else {
                         solveProblemsBar.update({ initText: ' ⚠ Stopped' });
-                        console.log('\n ║ ⚠ ⚠ ⚠ Next problem will exceed the maximum time indicates: '+maxTime+' ms ⚠ ⚠ ⚠')
-                        console.log(' ║ Problem: Params: '+p.p1+'/'+p.p2+' - Users:'+p.concurrentUsers)
+                        console.log('\n ║ ⚠ ⚠ ⚠ Next problem will exceed the maximum time indicates: ' + maxTime + ' ms ⚠ ⚠ ⚠')
+                        console.log(' ║ Problem: Params: ' + p.p1 + '/' + p.p2 + ' - Users:' + p.concurrentUsers)
                         problemsSolved = problemsSolved + 1;
                         totalResults.push({ type: p.type, problem: p, result: result });
                         res(totalResults);
                     }
                 } else {
-                    console.log(" Delay number not calculated yet");
+                    solveProblemsBar.update({ initText: ' ⚠ Stopped' });
+                    console.log('\n ║ ⚠ ⚠ ⚠ Next problem will exceed the maximum time indicates: ' + maxTime + ' ms ⚠ ⚠ ⚠')
+                    console.log(' ║ Problem: Params: ' + p.p1 + '/' + p.p2 + ' - Users:' + p.concurrentUsers)
+                    problemsSolved = problemsSolved + 1;
+                    res(totalResults);
                 }
 
             });
@@ -317,12 +346,10 @@ function getStatsByProblem(config) {
         try {
             exec(command, (error, stdout, stderr) => {
                 if (error) {
-                    console.log(`error: ${error.message}`);
-                    return;
+                    //res();
                 }
                 if (stderr) {
-                    console.log(`stderr: ${stderr}`);
-                    return;
+                    //rej();
                 }
 
                 let result = resultToJson(stdout);
@@ -330,8 +357,9 @@ function getStatsByProblem(config) {
                 res(result);
             });
         } catch (err) {
-            console.log(err);
+            console.log('Error during getStatsByProblem: ' + err);
             rej(err);
+            process.exit(err);
         }
 
     });

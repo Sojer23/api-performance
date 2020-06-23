@@ -13,6 +13,7 @@
   "author": "Jose Gallardo",
   "license": "ISC",
   "dependencies": {
+    "asciichart": "^1.5.21",
     "cli-progress": "^3.8.2",
     "cli-table": "^0.3.1"
   }

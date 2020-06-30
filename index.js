@@ -77,8 +77,8 @@ if ((delayAnalisys && process.argv.length != 7) ||
     console.log(" ╔════════════════════════════════════════════════════════════════════════════════════════════ ");
     console.log(" ║ Use: apiper <analysisType> <url> <queryParam1> <queryParam2> <iterationsToDelay> <multiplyProblem> <maxTime>");
     console.log(" ║");
-    console.log(" ║ Example: apiper -d http://ks.com/api/v1/stress/ 10000 100 2");
-    console.log(" ║ Example: apiper -t http://ks.com/api/v1/stress/ 10000 100 2 2 2 4 500");
+    console.log(" ║ Example: apiper -d http://ks.com/api/v1/stress/ 1000 10 4");
+    console.log(" ║ Example: apiper -t http://ks.com/api/v1/stress/ 1000 10 3 1 1 2 500");
     console.log(" ║ - (1) Analysis type (required):");
     console.log(" ║ -   -d: Indicate that only execute the script to get the optimum delay number");
     console.log(" ║ -       - Params required: url, queryNumber1, iterationsToDelay");

@@ -1,6 +1,6 @@
 {
   "name": "apiperformance",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A tool to reach the optimum delay to apply in APIPecker module",
   "main": "index.js",
   "scripts": {

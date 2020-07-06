@@ -1,6 +1,6 @@
 {
   "name": "apiperformance",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "A tool to reach the optimum delay to apply in APIPecker module",
   "main": "index.js",
   "scripts": {
@@ -8,12 +8,29 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "apiper": "./index.js"
+    "apiper": "index.js"
   },
   "author": "Jose Gallardo",
   "license": "ISC",
   "dependencies": {
+    "apipecker": "^1.1.2",
+    "asciichart": "^1.5.21",
     "cli-progress": "^3.8.2",
     "cli-table": "^0.3.1"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sojer23/api-performance.git"
+  },
+  "keywords": [
+    "api",
+    "performance",
+    "testing",
+    "automatic"
+  ],
+  "bugs": {
+    "url": "https://github.com/Sojer23/api-performance/issues"
+  },
+  "homepage": "https://github.com/Sojer23/api-performance#readme"
 }
